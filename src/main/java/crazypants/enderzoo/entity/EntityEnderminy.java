@@ -5,8 +5,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 
-import javax.vecmath.Vector3d;
-
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.SharedMonsterAttributes;
@@ -30,9 +28,11 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.living.EnderTeleportEvent;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import crazypants.enderzoo.EnderZoo;
 import crazypants.enderzoo.config.Config;
+import crazypants.enderzoo.vec.VecUtil;
 
-public class EntityEnderminy extends EntityMob {
+public class EntityEnderminy extends EntityMob implements IEnderZooMob{
 
   public static String NAME = "enderzoo.Enderminy";
   public static final int EGG_BG_COL = 0x27624D;
@@ -80,13 +80,14 @@ public class EntityEnderminy extends EntityMob {
     return Config.enderminySpawnInLitAreas ? true : super.isValidLightLevel();
   }
 
+  @Override
   protected void applyEntityAttributes() {
     super.applyEntityAttributes();
-    getEntityAttribute(SharedMonsterAttributes.maxHealth).setBaseValue(Config.enderminyHealth);
-    this.getEntityAttribute(SharedMonsterAttributes.movementSpeed).setBaseValue(0.3);
-    getEntityAttribute(SharedMonsterAttributes.attackDamage).setBaseValue(Config.enderminyAttackDamage);
+    getEntityAttribute(SharedMonsterAttributes.movementSpeed).setBaseValue(0.3);
+    MobInfo.ENDERMINY.applyAttributes(this);
   }
 
+  @Override
   protected void entityInit() {
     super.entityInit();
     dataWatcher.addObject(16, new Byte((byte) 0));
@@ -98,9 +99,9 @@ public class EntityEnderminy extends EntityMob {
   public boolean getCanSpawnHere() {
     boolean passedGrassCheck = true;
     if(Config.enderminySpawnOnlyOnGrass) {
-      int i = MathHelper.floor_double(this.posX);
-      int j = MathHelper.floor_double(this.boundingBox.minY);
-      int k = MathHelper.floor_double(this.posZ);
+      int i = MathHelper.floor_double(posX);
+      int j = MathHelper.floor_double(boundingBox.minY);
+      int k = MathHelper.floor_double(posZ);
       passedGrassCheck = worldObj.getBlock(i, j - 1, k) == Blocks.grass;
     }
     return posY > Config.enderminyMinSpawnY && super.getCanSpawnHere();
@@ -108,6 +109,7 @@ public class EntityEnderminy extends EntityMob {
 
   
 
+  @Override
   protected Entity findPlayerToAttack() {
 
     if(attackIfLookingAtPlayer) {
@@ -158,7 +160,7 @@ public class EntityEnderminy extends EntityMob {
 
       Vec3 relativePlayerEyePos = Vec3.createVectorHelper(
           posX - player.posX,
-          boundingBox.minY + (double) (height / 2.0F) - (player.posY + (double) player.getEyeHeight()),
+          boundingBox.minY + height / 2.0F - (player.posY + player.getEyeHeight()),
           posZ - player.posZ);
 
       double distance = relativePlayerEyePos.lengthVector();
@@ -178,6 +180,7 @@ public class EntityEnderminy extends EntityMob {
    * required. For example, zombies and skeletons use this to react to sunlight
    * and start to burn.
    */
+  @Override
   public void onLivingUpdate() {
 
     if(lastEntityToAttack != entityToAttack) {
@@ -191,8 +194,8 @@ public class EntityEnderminy extends EntityMob {
 
     lastEntityToAttack = entityToAttack;
     for (int k = 0; k < 2; ++k) {
-      worldObj.spawnParticle("portal", posX + (rand.nextDouble() - 0.5D) * (double) width, posY + rand.nextDouble()
-          * (double) height - 0.25D, posZ + (rand.nextDouble() - 0.5D) * (double) width, (rand.nextDouble() - 0.5D) * 2.0D,
+      worldObj.spawnParticle("portal", posX + (rand.nextDouble() - 0.5D) * width, posY + rand.nextDouble()
+          * height - 0.25D, posZ + (rand.nextDouble() - 0.5D) * width, (rand.nextDouble() - 0.5D) * 2.0D,
           -rand.nextDouble(), (rand.nextDouble() - 0.5D) * 2.0D);
     }
 
@@ -239,12 +242,12 @@ public class EntityEnderminy extends EntityMob {
   }
 
   protected boolean teleportToEntity(Entity p_70816_1_) {
-    Vec3 vec3 = Vec3.createVectorHelper(posX - p_70816_1_.posX, boundingBox.minY + (double) (height / 2.0F) - p_70816_1_.posY
-        + (double) p_70816_1_.getEyeHeight(), posZ - p_70816_1_.posZ);
+    Vec3 vec3 = Vec3.createVectorHelper(posX - p_70816_1_.posX, boundingBox.minY + height / 2.0F - p_70816_1_.posY
+        + p_70816_1_.getEyeHeight(), posZ - p_70816_1_.posZ);
     vec3 = vec3.normalize();
     double d0 = 16.0D;
     double d1 = posX + (rand.nextDouble() - 0.5D) * 8.0D - vec3.xCoord * d0;
-    double d2 = posY + (double) (rand.nextInt(16) - 8) - vec3.yCoord * d0;
+    double d2 = posY + (rand.nextInt(16) - 8) - vec3.yCoord * d0;
     double d3 = posZ + (rand.nextDouble() - 0.5D) * 8.0D - vec3.zCoord * d0;
     return teleportTo(d1, d2, d3);
   }
@@ -295,14 +298,14 @@ public class EntityEnderminy extends EntityMob {
 
     short short1 = 128;
     for (int l = 0; l < short1; ++l) {
-      double d6 = (double) l / ((double) short1 - 1.0D);
+      double d6 = l / (short1 - 1.0D);
       float f = (rand.nextFloat() - 0.5F) * 0.2F;
       float f1 = (rand.nextFloat() - 0.5F) * 0.2F;
       float f2 = (rand.nextFloat() - 0.5F) * 0.2F;
-      double d7 = d3 + (posX - d3) * d6 + (rand.nextDouble() - 0.5D) * (double) width * 2.0D;
-      double d8 = d4 + (posY - d4) * d6 + rand.nextDouble() * (double) height;
-      double d9 = d5 + (posZ - d5) * d6 + (rand.nextDouble() - 0.5D) * (double) width * 2.0D;
-      worldObj.spawnParticle("portal", d7, d8, d9, (double) f, (double) f1, (double) f2);
+      double d7 = d3 + (posX - d3) * d6 + (rand.nextDouble() - 0.5D) * width * 2.0D;
+      double d8 = d4 + (posY - d4) * d6 + rand.nextDouble() * height;
+      double d9 = d5 + (posZ - d5) * d6 + (rand.nextDouble() - 0.5D) * width * 2.0D;
+      worldObj.spawnParticle("portal", d7, d8, d9, f, f1, f2);
     }
 
     worldObj.playSoundEffect(d3, d4, d5, "mob.endermen.portal", 1.0F, 1.0F);
@@ -311,32 +314,35 @@ public class EntityEnderminy extends EntityMob {
 
   }
 
+  @Override
   protected String getLivingSound() {
     return isScreaming() ? "mob.endermen.scream" : "mob.endermen.idle";
   }
 
+  @Override
   protected String getHurtSound() {
     return "mob.endermen.hit";
   }
 
+  @Override
   protected String getDeathSound() {
     return "mob.endermen.death";
   }
 
+  @Override
   protected Item getDropItem() {
     return Items.ender_pearl;
   }
 
-  /**
-   * Drop 0-2 items of this living's type. @param par1 - Whether this entity has
-   * recently been hit by a player. @param par2 - Level of Looting used to kill
-   * this mob.
-   */
-  protected void dropFewItems(boolean p_70628_1_, int p_70628_2_) {
+  @Override
+  protected void dropFewItems(boolean hitByPlayer, int looting) {
     Item item = getDropItem();
     if(item != null) {
-      int j = rand.nextInt(2 + p_70628_2_);
-      for (int k = 0; k < j; ++k) {
+      int numItems = rand.nextInt(2 + looting);
+      for (int i = 0; i < numItems; ++i) {
+        if(rand.nextFloat() <= 0.5) {
+          dropItem(EnderZoo.itemEnderFragment, 1);
+        }
         dropItem(item, 1);
       }
     }
@@ -345,6 +351,7 @@ public class EntityEnderminy extends EntityMob {
   /**
    * Called when the entity is attacked.
    */
+  @Override
   public boolean attackEntityFrom(DamageSource damageSource, float p_70097_2_) {
     if(isEntityInvulnerable()) {
       return false;
@@ -393,7 +400,6 @@ public class EntityEnderminy extends EntityMob {
     if(!(entityToAttack instanceof EntityPlayer)) {
       return;
     }
-    System.out.println("EntityEnderminy.doGroupArgo: ");
     int range = 16;
     AxisAlignedBB bb = AxisAlignedBB.getBoundingBox(posX - range, posY - range, posZ - range, posX + range, posY + range, posZ + range);
     List<EntityEnderminy> minies = worldObj.getEntitiesWithinAABB(EntityEnderminy.class, bb);
@@ -416,22 +422,23 @@ public class EntityEnderminy extends EntityMob {
   }
 
   private final class ClosestEntityComparator implements Comparator<EntityCreeper> {
-    Vector3d pos = new Vector3d();
+    
+    Vec3 pos = Vec3.createVectorHelper(0, 0, 0);
 
     @Override
     public int compare(EntityCreeper o1, EntityCreeper o2) {
-      pos.set(posX, posY, posZ);
-      double d1 = distanceSquared(new Vector3d(o1.posX, o1.posY, o1.posZ), pos);
-      double d2 = distanceSquared(new Vector3d(o2.posX, o2.posY, o2.posZ), pos);
+      VecUtil.set(pos, posX, posY, posZ);      
+      double d1 = distanceSquared(o1.posX, o1.posY, o1.posZ, pos);
+      double d2 = distanceSquared(o2.posX, o2.posY, o2.posZ, pos);
       return Double.compare(d1, d2);
     }
   }
   
-  public double distanceSquared(Vector3d v1, Vector3d v2) {
+  public double distanceSquared(double x, double y, double z, Vec3 v2) {
     double dx, dy, dz;
-    dx = v1.x - v2.x;
-    dy = v1.y - v2.y;
-    dz = v1.z - v2.z;
+    dx = x - v2.xCoord;
+    dy = y - v2.yCoord;
+    dz = z - v2.zCoord;
     return (dx * dx + dy * dy + dz * dz);
   }
 

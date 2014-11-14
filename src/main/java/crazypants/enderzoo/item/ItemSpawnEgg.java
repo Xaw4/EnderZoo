@@ -25,6 +25,8 @@ import crazypants.enderzoo.entity.MobInfo;
 
 public class ItemSpawnEgg extends Item {
 
+  private static final String NAME = "itemSpawnEggEnderZoo";
+
   public static ItemSpawnEgg create() {
     ItemSpawnEgg res = new ItemSpawnEgg();
     res.init();
@@ -32,13 +34,13 @@ public class ItemSpawnEgg extends Item {
   }
 
   private ItemSpawnEgg() {
-    setUnlocalizedName("itemSpawnEggEnderZoo");
+    setUnlocalizedName(NAME);
     setCreativeTab(EnderZooTab.tabEnderZoo);
     setHasSubtypes(true);
   }
   
   private void init() {
-    GameRegistry.registerItem(this, "itemSpawnEggEnderZoo");
+    GameRegistry.registerItem(this, NAME);
   }
 
   @Override
@@ -106,7 +108,7 @@ public class ItemSpawnEgg extends Item {
 
     int damage = MathHelper.clamp_int(stack.getItemDamage(), 0, MobInfo.values().length - 1);
     EntityLiving entity = (EntityLiving)EntityList.createEntityByName(MobInfo.values()[damage].getName(), world);
-    spawnEntity(posX, posY, posZ, entity, world);
+    spawnEntity(posX + 0.5, posY, posZ + 0.5, entity, world);
     return entity;    
   }
 

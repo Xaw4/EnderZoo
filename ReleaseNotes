@@ -1,0 +1,75 @@
+-------------------------------------------
+Version 1.0.4 
+-------------------------------------------
+Changes
+- Added config options to modify the health and attack damage of EZ and/or all mobs based on difficulty setting
+- Increased default Fallen Knight health to 20 (same as a Zombie, Skeleton etc)
+- #14 Rename pt_BR to pt_BR.lang (Adaptivity)
+- #17, #18 Update zh_CN.lang (Mrkwtkr)
+
+Bugs
+- #16 Fallen Steeds not killable using Cauldron protection plugin (MikeLydeamore)
+- Fixed wander speed of fallen mount
+- Fixed Fallen Mounts loosing saddles and armor on reload.
+
+-------------------------------------------
+Version 1.0.3 
+-------------------------------------------
+Changes
+- Added Confusing Powder, dropped by Concussion Creepers
+- Added Ender Fragment, dropped by Concussion Creepers and Enderminies
+  - 5 ender fragments can be crafted into an Ender Pearl
+- Added Nausea potions can be brewed using Confusing Powder
+- Added Confusing Charges. TNT like block that causes confusion. Crafted using Confusing Powder
+- Added Ender Charges.TNT like block that randomly teleports surrounding entities. Crafted using Ender Fragments
+- Added Concussion Charges. Combined effects of Ender and Confusing Charges
+- Lower default spawn rate
+- Small nurf to Wither Cats
+- Prevented all mobs spawning in the nether (occurred with BoP) 
+- #7 Removed Concussion Creepers spawning on Mushroom Island 
+- #9 Update zh_CN.lang (Mrkwtkr)
+- #10 Update de_DE.lang (Vexatos)
+
+Bugs
+- #11 Hit box for the wither cat is too small
+- Fixed firing rate of ranged Fallen Knights. Config option fallenKnightRangedMaxAttackPause was reading the min value
+
+
+-------------------------------------------
+Version 1.0.2 
+-------------------------------------------
+Changes
+- Added Wither Cat
+- Added withering enchantments for sword and bow
+- #5 Updated zh_CN.lang (Mrkwtkr)
+- #6 Created pt_BR  (Galvanize)
+- Added WAILA support (tterrag)
+
+-------------------------------------------
+Version 1.0.1 
+-------------------------------------------
+Changes
+- Added Wither Witch, throws wither potions
+- Added Withering Powder, dropped by Wither Witch, used to brew wither potions
+- Added zh_CN.lang (Mrkwtkr)
+
+Bugs
+- #4 Server crash due to use of classes unavailable on server
+- Fixed Fallen Steeds spawning without riders
+
+-------------------------------------------
+Version 1.0.0.3 Beta
+-------------------------------------------
+- Mounted archer Fallen Knights will now attempt to stay out of melee range
+- Ground archer Fallen Knights will switch to a sword when in melee range
+- Added randomized Fallen Knights swords based on global difficulty and regional difficulty settings
+- Added GUI to change config in game
+- Added XML based spawn configs
+
+-------------------------------------------
+Version 1.0.0.0 Beta
+-------------------------------------------
+- Moved Enderminy and Concussion Creepers from EnderIO
+- Added Fallen Knights
+- Added Fallen Mounts
+- Added de_DE.lang (Xaw4)

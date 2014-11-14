@@ -1,23 +1,29 @@
 package crazypants.enderzoo;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.model.ModelHorse;
-import net.minecraft.client.renderer.entity.RenderHorse;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.world.World;
 import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.client.registry.RenderingRegistry;
+import crazypants.enderzoo.charge.EntityPrimedCharge;
+import crazypants.enderzoo.charge.RenderPrimedCharge;
 import crazypants.enderzoo.config.Config;
+import crazypants.enderzoo.entity.EntityConcussionCreeper;
+import crazypants.enderzoo.entity.EntityDireWolf;
+import crazypants.enderzoo.entity.EntityEnderminy;
 import crazypants.enderzoo.entity.EntityFallenKnight;
 import crazypants.enderzoo.entity.EntityFallenMount;
-import crazypants.enderzoo.entity.EntityConcussionCreeper;
-import crazypants.enderzoo.entity.EntityEnderminy;
+import crazypants.enderzoo.entity.EntityWitherCat;
+import crazypants.enderzoo.entity.EntityWitherWitch;
 import crazypants.enderzoo.entity.render.RenderConcussionCreeper;
+import crazypants.enderzoo.entity.render.RenderDirewolf;
 import crazypants.enderzoo.entity.render.RenderEnderminy;
 import crazypants.enderzoo.entity.render.RenderFallenKnight;
 import crazypants.enderzoo.entity.render.RenderFallenMount;
+import crazypants.enderzoo.entity.render.RenderWitherCat;
+import crazypants.enderzoo.entity.render.RenderWitherWitch;
 
 
 public class ClientProxy extends CommonProxy {
@@ -47,8 +53,20 @@ public class ClientProxy extends CommonProxy {
     if(Config.fallenMountEnabled) {
       RenderingRegistry.registerEntityRenderingHandler(EntityFallenMount.class, new RenderFallenMount());
     }
+    if(Config.witherWitchEnabled) {
+      RenderingRegistry.registerEntityRenderingHandler(EntityWitherWitch.class, new RenderWitherWitch());
+    } 
+    if(Config.witherCatEnabled) {
+      RenderingRegistry.registerEntityRenderingHandler(EntityWitherCat.class, new RenderWitherCat());
+    }
+    if(Config.direWolfEnabled) {
+      RenderingRegistry.registerEntityRenderingHandler(EntityDireWolf.class, new RenderDirewolf());
+    }
+    RenderingRegistry.registerEntityRenderingHandler(EntityPrimedCharge.class, new RenderPrimedCharge());
+    //RenderingRegistry.registerEntityRenderingHandler(EntityPotionEZ_WIP.class, new RenderPotionEntity_WIP());
   }
   
+  @Override
   public void setInstantConfusionOnPlayer(EntityPlayer ent, int duration) {
     ent.addPotionEffect(new PotionEffect(Potion.confusion.getId(), duration, 1, true));
     Minecraft.getMinecraft().thePlayer.timeInPortal = 1;
